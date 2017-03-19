@@ -1,0 +1,28 @@
+<bundlespec>
+	<manifest>
+    	<name>macchina.io Ultra Sonic Sensor</name>
+		<symbolicName>io.macchina.UltraSonicSensor</symbolicName>
+		<version>1.0.0</version>
+		<vendor>Applied Informatics</vendor>
+		<copyright>(c) 2017 Innopolis guys</copyright>
+		<activator>
+			<class>IoT::UltraSonicSensor::BundleActivator</class>
+			<library>io.macchina.UltraSonicSensor</library>
+		</activator>
+		<lazyStart>false</lazyStart>
+		<runLevel>510</runLevel>
+		<dependency>
+			<symbolicName>io.macchina.devices</symbolicName>
+			<version>[1.0.0, 2.0.0)</version>
+		</dependency>
+	</manifest>
+	<code>
+		bin/*.dll,
+		bin/*.pdb,
+		bin/${osName}/${osArch}/*.so,
+		bin/${osName}/${osArch}/*.dylib,
+	</code>
+	<files>
+		bundle/*
+	</files>
+</bundlespec>
