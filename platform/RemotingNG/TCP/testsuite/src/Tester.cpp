@@ -1,7 +1,7 @@
 //
 // Tester.cpp
 //
-// $Id: //poco/1.7/RemotingNG/TCP/testsuite/src/Tester.cpp#1 $
+// $Id: //poco/1.7/RemotingNG/TCP/testsuite/src/Tester.cpp#2 $
 //
 // Copyright (c) 2009-2011, Applied Informatics Software Engineering GmbH.
 // All rights reserved.
@@ -232,6 +232,16 @@ void Tester::testSynchronizedRemote()
 void Tester::testFault()
 {
 	throw Poco::ApplicationException("Something went wrong");
+}
+
+
+void Tester::testAuthenticated()
+{
+}
+
+
+void Tester::testPermission()
+{
 }
 
 

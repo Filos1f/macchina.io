@@ -29,7 +29,8 @@ Prerequisites
 
   - GNU Make
   - GNU C++ (g++) on Linux or Clang++ on OS X
-  - OpenSSL headers and libraries 
+  - OpenSSL headers and libraries (on OS X, via [Homebrew](http://brew.sh): `brew install openssl`)
+  - Python (for building V8)
 
 
 Getting Started

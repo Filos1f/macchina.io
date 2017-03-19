@@ -3,8 +3,8 @@
 //
 // $Id: //poco/1.4/JS/Core/src/JSExecutor.cpp#7 $
 //
-// Library: JSCore
-// Package: JSCore
+// Library: JS/Core
+// Package: Execution
 // Module:  JSExecutor
 //
 // Copyright (c) 2013-2014, Applied Informatics Software Engineering GmbH.
@@ -309,6 +309,36 @@ void JSExecutor::callInContext(v8::Handle<v8::Function>& function, v8::Handle<v8
 }
 
 
+void JSExecutor::callInContext(v8::Persistent<v8::Object>& jsObject, const std::string& method, int argc, v8::Handle<v8::Value> argv[])
+{
+	ScopedRunningCounter src(_running);
+
+	attachToCurrentThread();
+
+	v8::Isolate* pIsolate = _pooledIso.isolate();
+
+	v8::Local<v8::String> jsMethod = v8::String::NewFromUtf8(pIsolate, method.c_str());
+
+	v8::Local<v8::Object> localObject(v8::Local<v8::Object>::New(pIsolate, jsObject));
+
+	if (localObject->Has(jsMethod))
+	{
+		v8::Local<v8::Value> jsValue = localObject->Get(jsMethod);
+		if (jsValue->IsFunction())
+		{
+			v8::Local<v8::Function> jsFunction = v8::Local<v8::Function>::Cast(jsValue);
+		
+			v8::TryCatch tryCatch;			
+			jsFunction->Call(localObject, argc, argv);
+			if (tryCatch.HasCaught())
+			{
+				reportError(tryCatch);
+			}
+		}
+	}
+}
+
+
 void JSExecutor::call(v8::Persistent<v8::Object>& jsObject, const std::string& method, const std::string& args)
 {
 	ScopedRunningCounter src(_running);
@@ -436,7 +466,11 @@ void JSExecutor::includeScript(const std::string& uri)
 	v8::Context::Scope contextScope(context);
 
 	Poco::URI includeURI(_sourceURI, uri);
+#if __cplusplus < 201103L
 	std::auto_ptr<std::istream> istr(Poco::URIStreamOpener::defaultOpener().open(includeURI));
+#else
+	std::unique_ptr<std::istream> istr(Poco::URIStreamOpener::defaultOpener().open(includeURI));
+#endif
 	std::string source;
 	Poco::StreamCopier::copyToString(*istr, source);
 

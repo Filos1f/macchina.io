@@ -1,7 +1,7 @@
 //
 // Tester.cpp
 //
-// $Id: //poco/1.7/RemotingNG/testsuite/src/Tester.cpp#2 $
+// $Id: //poco/1.7/RemotingNG/testsuite/src/Tester.cpp#4 $
 //
 // Copyright (c) 2006-2014, Applied Informatics Software Engineering GmbH.
 // All rights reserved.
@@ -260,3 +260,12 @@ void Tester::fireTestFilteredEvent(int arg)
 	testFilteredEvent(this, arg);
 }
 
+
+void Tester::testPermission1()
+{
+}
+
+
+void Tester::testPermission2()
+{
+}

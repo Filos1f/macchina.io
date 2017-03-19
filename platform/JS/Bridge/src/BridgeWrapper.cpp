@@ -3,8 +3,8 @@
 //
 // $Id: //poco/1.4/JS/Bridge/src/BridgeWrapper.cpp#9 $
 //
-// Library: JSBridge
-// Package: Bridge
+// Library: JS/Bridge
+// Package: Bridging
 // Module:  BridgeWrapper
 //
 // Copyright (c) 2013-2014, Applied Informatics Software Engineering GmbH.
@@ -18,7 +18,8 @@
 #include "Poco/JS/Bridge/Listener.h"
 #include "Poco/JS/Bridge/Serializer.h"
 #include "Poco/JS/Bridge/Deserializer.h"
-#include "Poco/JS/Bridge/JSONEventSerializer.h"
+#include "Poco/JS/Bridge/TaggedBinarySerializer.h"
+#include "Poco/JS/Bridge/TaggedBinaryReader.h"
 #include "Poco/JS/Core/PooledIsolate.h"
 #include "Poco/RemotingNG/ServerTransport.h"
 #include "Poco/RemotingNG/Transport.h"
@@ -30,6 +31,7 @@
 #include "Poco/NumberFormatter.h"
 #include "Poco/SharedPtr.h"
 #include "Poco/Delegate.h"
+#include "Poco/Logger.h"
 #include <sstream>
 
 
@@ -46,7 +48,8 @@ namespace Bridge {
 class Transport: public Poco::RemotingNG::Transport
 {
 public:
-	Transport()
+	Transport():
+		_logger(Poco::Logger::get("JS.Bridge.Transport"))
 	{
 	}
 	
@@ -88,16 +91,17 @@ public:
 	{
 		poco_assert_dbg (messageType == Poco::RemotingNG::SerializerBase::MESSAGE_EVENT);
 
-		std::string json = _pStream->str();
+		std::string args = _pStream->str();
 		BridgeHolder::Ptr pBridgeHolder = BridgeHolder::find(_endPoint);
 		if (pBridgeHolder)
 		{
-			pBridgeHolder->fireEvent(messageName, json);
+			pBridgeHolder->fireEvent(messageName, args);
 		}
 	}
 	
 	Poco::RemotingNG::Serializer& beginRequest(const Poco::RemotingNG::Identifiable::ObjectId& oid, const Poco::RemotingNG::Identifiable::TypeId& tid, const std::string& messageName, Poco::RemotingNG::SerializerBase::MessageType messageType)
 	{
+		_logger.error("Cannot deliver event %s in class %s. Event has a non-const argument and is not declared oneway.", messageName, tid);
 		throw Poco::NotImplementedException("beginRequest() not implemented for jsbridge Transport");
 	}
 	
@@ -116,7 +120,8 @@ public:
 private:
 	std::string _endPoint;
 	Poco::SharedPtr<std::stringstream> _pStream;
-	JSONEventSerializer _serializer;
+	TaggedBinarySerializer _serializer;
+	Poco::Logger& _logger;
 };
 
 
@@ -205,6 +210,7 @@ class EventTask: public Poco::Util::TimerTask
 public:
 	EventTask(Poco::JS::Core::TimedJSExecutor::Ptr pExecutor, v8::Isolate* pIsolate, const v8::Persistent<v8::Object>& jsObject, const std::string& event, const std::string& args):
 		_pExecutor(pExecutor),
+		_pIsolate(pIsolate),
 		_jsObject(pIsolate, jsObject),
 		_event(event),
 		_args(args)
@@ -218,11 +224,22 @@ public:
 	
 	void run()
 	{
-		_pExecutor->call(_jsObject, _event, _args);
+		v8::Locker locker(_pIsolate);
+		v8::Isolate::Scope isoScope(_pIsolate);
+		v8::HandleScope handleScope(_pIsolate);
+
+		v8::Local<v8::Context> context(v8::Local<v8::Context>::New(_pIsolate, _pExecutor->scriptContext()));
+		v8::Context::Scope contextScope(context);
+
+		TaggedBinaryReader reader(_pIsolate);
+		std::istringstream istr(_args);
+		v8::Handle<v8::Value> args[] = {reader.read(istr)};
+		_pExecutor->callInContext(_jsObject, _event, 1, args);
 	}
 	
 private:
 	Poco::JS::Core::TimedJSExecutor::Ptr _pExecutor;
+	v8::Isolate* _pIsolate;
 	v8::Persistent<v8::Object> _jsObject;
 	std::string _event;
 	std::string _args;

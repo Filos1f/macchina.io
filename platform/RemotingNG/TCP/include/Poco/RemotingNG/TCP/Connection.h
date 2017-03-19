@@ -1,7 +1,7 @@
 //
 // Connection.h
 //
-// $Id: //poco/1.7/RemotingNG/TCP/include/Poco/RemotingNG/TCP/Connection.h#2 $
+// $Id: //poco/1.7/RemotingNG/TCP/include/Poco/RemotingNG/TCP/Connection.h#3 $
 //
 // Library: RemotingNG/TCP
 // Package: TCP
@@ -129,7 +129,7 @@ public:
 		
 	Poco::UInt32 id() const;
 		/// Returns the ID of the connection. This is unique within the
-		/// server process among all connections.
+		/// server or client process among all connections.
 	
 	ConnectionMode mode() const;
 		/// Returns the connection mode.
@@ -196,7 +196,7 @@ public:
 
 	void returnFrame(Frame::Ptr pFrame);
 		/// Returns the frame to the pool.
-	
+		
 protected:
 	void run();
 		/// Handle incoming frames.
@@ -229,7 +229,7 @@ protected:
 
 	int receiveNBytes(char* buffer, int bytes);
 		/// Receive exactly the given number of bytes.
-
+	
 private:
 	Connection();
 	Connection(const Connection&);

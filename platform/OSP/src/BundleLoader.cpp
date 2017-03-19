@@ -40,10 +40,6 @@ using Poco::Environment;
 using Poco::Logger;
 
 
-#define POCO_OSP_STRINGIFY(X) POCO_OSP_STRINGIFY_(X)
-#define POCO_OSP_STRINGIFY_(X) #X
-
-
 namespace Poco {
 namespace OSP {
 
@@ -70,12 +66,12 @@ BundleLoader::BundleLoader(CodeCache& codeCache, BundleFactory::Ptr pBundleFacto
 	_pBundleFactory(pBundleFactory),
 	_pBundleContextFactory(pBundleContextFactory),
 #ifdef POCO_TARGET_OSNAME
-	_osName(POCO_OSP_STRINGIFY(POCO_TARGET_OSNAME)),
+	_osName(POCO_TARGET_OSNAME),
 #else
 	_osName(Environment::osName()),
 #endif
 #ifdef POCO_TARGET_OSARCH
-	_osArch(POCO_OSP_STRINGIFY(POCO_TARGET_OSARCH)),
+	_osArch(POCO_TARGET_OSARCH),
 #else
 	_osArch(Environment::osArchitecture()),
 #endif
@@ -89,6 +85,8 @@ BundleLoader::BundleLoader(CodeCache& codeCache, BundleFactory::Ptr pBundleFacto
 #else
 	makeValidFileName(_osArch);
 #endif
+
+	_logger.debug("os='%s' arch='%s'", _osName, _osArch);
 }
 
 
@@ -703,7 +701,11 @@ void BundleLoader::installLibrary(Bundle* pBundle, const Poco::Path& p, const Po
 	{
 		_logger.debug(std::string("Installing library ") + p.toString(Path::PATH_UNIX));
 	}
+#if __cplusplus < 201103L
 	std::auto_ptr<std::istream> pStream(pBundle->storage().getResource(p.toString(Path::PATH_UNIX)));
+#else
+	std::unique_ptr<std::istream> pStream(pBundle->storage().getResource(p.toString(Path::PATH_UNIX)));
+#endif
 	if (pStream.get())
 	{
 		_codeCache.installLibrary(p.getFileName(), *pStream);

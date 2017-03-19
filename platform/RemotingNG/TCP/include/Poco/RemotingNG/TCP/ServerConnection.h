@@ -1,7 +1,7 @@
 //
 // ServerConnection.h
 //
-// $Id: //poco/1.7/RemotingNG/TCP/include/Poco/RemotingNG/TCP/ServerConnection.h#1 $
+// $Id: //poco/1.7/RemotingNG/TCP/include/Poco/RemotingNG/TCP/ServerConnection.h#2 $
 //
 // Library: RemotingNG/TCP
 // Package: TCP
@@ -22,8 +22,10 @@
 
 #include "Poco/RemotingNG/TCP/TCP.h"
 #include "Poco/RemotingNG/TCP/Listener.h"
+#include "Poco/RemotingNG/TCP/CredentialsStore.h"
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Logger.h"
+#include <map>
 
 
 namespace Poco {
@@ -46,6 +48,7 @@ public:
 
 private:
 	Listener::Ptr _pListener;
+	CredentialsStore::Ptr _pCredentialsStore;
 	Poco::Logger& _logger;
 };
 

@@ -1,7 +1,7 @@
 //
 // AttributedObject.h
 //
-// $Id: //poco/1.7/RemotingNG/include/Poco/RemotingNG/AttributedObject.h#1 $
+// $Id: //poco/1.7/RemotingNG/include/Poco/RemotingNG/AttributedObject.h#3 $
 //
 // Library: RemotingNG
 // Package: ORB
@@ -23,6 +23,8 @@
 #include "Poco/RemotingNG/RemotingNG.h"
 #include "Poco/AutoPtr.h"
 #include "Poco/Mutex.h"
+#include <cstdlib>
+#include <vector>
 #include <map>
 
 
@@ -35,8 +37,7 @@ class RemotingNG_API AttributedObject
 	/// the form of name-value pairs.
 {
 public:
-	typedef Poco::AutoPtr<AttributedObject> Ptr;
-	typedef std::map<std::string,std::string> NameValueMap;
+	typedef std::map<std::string, std::string> NameValueMap;
 
 	AttributedObject();
 		/// Creates an AttributedObject.
@@ -66,10 +67,33 @@ public:
 	bool hasAttribute(const std::string& name) const;
 		/// Returns true iff an attribute with the given name exists.
 		
+	void removeAttribute(const std::string& name);
+		/// Removes the attribute with the given name.
+
+		/// Does nothing if no attribute with the given name exists.
+		
+	std::size_t countAttributes() const;
+		/// Returns the number of attributes.
+		
+	std::vector<std::string> enumerateAttributes() const;
+		/// Returns a vector containing all attribute names.
+		
+	void clearAttributes();
+		/// Removes all attributes.
+	
 private:
 	NameValueMap _attributes;
 	mutable Poco::FastMutex _mutex;
 };
+
+
+//
+// inlines
+//
+inline std::size_t AttributedObject::countAttributes() const
+{
+	return _attributes.size();
+}
 
 
 } } // namespace Poco::RemotingNG

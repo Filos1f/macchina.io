@@ -8,10 +8,11 @@
 
 .PHONY: clean all install_sdk install_runtime install
 
-TARGET ?= sdk
-INSTALLDIR ?= /usr/local/macchina
+PRODUCT ?= sdk
+DESTDIR ?= /usr/local/macchina
+INSTALLDIR ?= $(DESTDIR)
 
-RUNTIME_LIBS = PocoFoundation PocoXML PocoJSON PocoUtil PocoZip PocoOSP PocoRemotingNG
+RUNTIME_LIBS = PocoFoundation PocoXML PocoJSON PocoUtil PocoZip PocoOSP PocoRemotingNG PocoGeo
 
 MACCHINA_BASE = $(shell pwd)
 POCO_BASE = $(MACCHINA_BASE)/platform
@@ -21,13 +22,13 @@ export MACCHINA_BASE
 export POCO_BASE
 export PROJECT_BASE
 
-ifeq ($(TARGET),sdk)
+ifeq ($(PRODUCT),sdk)
 INSTALL_TARGET = install_sdk
-else ifeq ($(TARGET),runtime)
+else ifeq ($(PRODUCT),runtime)
 INSTALL_TARGET = install_runtime
 MAKEARGS = DEFAULT_TARGET=shared_release
 else
-$(error Invalid TARGET specified: $(TARGET))
+$(error Invalid PRODUCT specified: $(PRODUCT))
 endif
 
 POCO_HOST_OSNAME = $(shell uname)

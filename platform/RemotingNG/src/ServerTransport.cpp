@@ -1,7 +1,7 @@
 //
 // ServerTransport.cpp
 //
-// $Id: //poco/1.7/RemotingNG/src/ServerTransport.cpp#1 $
+// $Id: //poco/1.7/RemotingNG/src/ServerTransport.cpp#3 $
 //
 // Library: RemotingNG
 // Package: Transport
@@ -28,6 +28,18 @@ ServerTransport::ServerTransport()
 
 ServerTransport::~ServerTransport()
 {
+}
+
+
+bool ServerTransport::authorize(const std::string& method, const std::string& permission)
+{
+	return true;
+}
+
+
+bool ServerTransport::authenticate(const std::string& method)
+{
+	return true;
 }
 
 

@@ -1,7 +1,7 @@
 #
 # Makefile
 #
-# $Id: //poco/1.7/RemotingNG/TCP/Makefile#1 $
+# $Id: //poco/1.7/RemotingNG/TCP/Makefile#4 $
 #
 # Makefile for Poco RemotingNG TCP Transport
 #
@@ -15,13 +15,17 @@ objects = \
 	Frame \
 	FrameQueue \
 	Listener \
+	CredentialsStore \
 	ServerConnection \
 	ServerConnectionFactory \
 	ServerTransport \
 	SocketFactory \
 	Timer \
 	Transport \
-	TransportFactory
+	TransportFactory \
+	PlainClientAuthenticator \
+	SCRAMClientAuthenticator \
+	SCRAMAuthenticator
 
 target         = PocoRemotingNGTCP
 target_version = $(LIBVERSION)

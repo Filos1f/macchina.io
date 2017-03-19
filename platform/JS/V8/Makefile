@@ -8,6 +8,10 @@
 
 include $(POCO_BASE)/build/rules/global
 
+export CFLAGS
+export CXXFLAGS
+export LINKFLAGS
+
 V8VERSION = 3.28.4
 GYPREVISION = 1831
 V8BASE = v8-$(V8VERSION)
@@ -40,8 +44,11 @@ V8FLAGS += arm_version=6
 # Workaround for Raspberry Pi
 V8FLAGS += armfpu=vfp armfloatabi=hard armneon=off
 endif
-ifeq ($(findstring mipsel,$(OSARCH)),mipsel)
+ifeq ($(OSARCH),mipsel)
 V8ARCH = mipsel
+endif
+ifeq ($(OSARCH),mips)
+V8ARCH = mips
 endif
 
 $(info Building V8 for arch $(V8ARCH) with flags: $(V8FLAGS))
@@ -51,7 +58,10 @@ $(error Unknown target architecture)
 endif
 
 ifeq ($(findstring clang,$(CXX)),clang)
-GYP_DEFINES += clang=1
+GYP_DEFINES += clang=1 
+ifeq ($(OSNAME),Darwin)
+GYP_DEFINES += mac_deployment_target=10.9
+endif
 CXX += -Wno-tautological-undefined-compare -Wno-inconsistent-missing-override -Wno-shift-negative-value
 endif
 

@@ -1,7 +1,7 @@
 //
 // Context.cpp
 //
-// $Id: //poco/1.7/RemotingNG/src/Context.cpp#1 $
+// $Id: //poco/1.7/RemotingNG/src/Context.cpp#2 $
 //
 // Library: RemotingNG
 // Package: Transport
@@ -84,6 +84,18 @@ Context::Attributes::const_iterator Context::begin() const
 Context::Attributes::const_iterator Context::end() const
 {
 	return _attrs.end();
+}
+
+
+void Context::setCredentials(const Credentials& creds)
+{
+	_creds = creds;
+}
+
+
+void Context::clearCredentials()
+{
+	_creds.clearAttributes();
 }
 
 

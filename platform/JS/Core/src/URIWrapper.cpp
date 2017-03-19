@@ -3,8 +3,8 @@
 //
 // $Id: //poco/1.4/JS/Core/src/URIWrapper.cpp#5 $
 //
-// Library: JSCore
-// Package: JSCore
+// Library: JS/Core
+// Package: Wrappers
 // Module:  URIWrapper
 //
 // Copyright (c) 2013-2014, Applied Informatics Software Engineering GmbH.
@@ -54,7 +54,11 @@ void URIWrapper::loadString(const v8::FunctionCallbackInfo<v8::Value>& args)
 	try
 	{
 		std::string data;
+#if __cplusplus < 201103L
 		std::auto_ptr<std::istream> pStream(Poco::URIStreamOpener::defaultOpener().open(uri));
+#else
+		std::unique_ptr<std::istream> pStream(Poco::URIStreamOpener::defaultOpener().open(uri));
+#endif
 		Poco::StreamCopier::copyToString(*pStream, data);
 		returnString(args, data);
 	}
@@ -73,7 +77,11 @@ void URIWrapper::loadBuffer(const v8::FunctionCallbackInfo<v8::Value>& args)
 	try
 	{
 		std::string data;
+#if __cplusplus < 201103L
 		std::auto_ptr<std::istream> pStream(Poco::URIStreamOpener::defaultOpener().open(uri));
+#else
+		std::unique_ptr<std::istream> pStream(Poco::URIStreamOpener::defaultOpener().open(uri));
+#endif
 		Poco::StreamCopier::copyToString(*pStream, data);
 		Poco::JS::Core::BufferWrapper::Buffer* pBuffer = new Poco::JS::Core::BufferWrapper::Buffer(data.data(), data.size());
 		Poco::JS::Core::BufferWrapper wrapper;

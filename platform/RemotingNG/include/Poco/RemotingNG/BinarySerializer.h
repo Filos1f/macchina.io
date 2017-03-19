@@ -1,7 +1,7 @@
 //
 // BinarySerializer.h
 //
-// $Id: //poco/1.7/RemotingNG/include/Poco/RemotingNG/BinarySerializer.h#1 $
+// $Id: //poco/1.7/RemotingNG/include/Poco/RemotingNG/BinarySerializer.h#4 $
 //
 // Library: RemotingNG
 // Package: Serialization
@@ -59,6 +59,14 @@ public:
 
 	void serializeEndPoint(const std::string& oid, const std::string& tid);
 		/// Serializes the object and type ID of the service object.
+		
+	template <typename T>
+	void serializeToken(T t)
+		/// Serializes the given value, which must be a type directly supported
+		/// by Poco::BinaryWriter.
+	{
+		(*this->_pWriter) << t;
+	}
 
 	// Serializer
 	void serializeMessageBegin(const std::string& name, SerializerBase::MessageType type);
@@ -106,7 +114,11 @@ protected:
 	};
 
 private:
+#if __cplusplus < 201103L
 	typedef std::auto_ptr<Poco::BinaryWriter> BinaryWriterPtr;
+#else
+	typedef std::unique_ptr<Poco::BinaryWriter> BinaryWriterPtr;
+#endif
 
 	BinaryWriterPtr _pWriter;
 	

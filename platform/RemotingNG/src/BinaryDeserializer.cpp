@@ -1,7 +1,7 @@
 //
 // BinaryDeserializer.cpp
 //
-// $Id: //poco/1.7/RemotingNG/src/BinaryDeserializer.cpp#1 $
+// $Id: //poco/1.7/RemotingNG/src/BinaryDeserializer.cpp#5 $
 //
 // Library: RemotingNG
 // Package: Serialization
@@ -106,7 +106,7 @@ bool BinaryDeserializer::deserializeSequenceBegin(const std::string& /*name*/, b
 void BinaryDeserializer::deserializeSequenceEnd(const std::string& /*name*/)
 {
 	poco_assert_dbg (!_sequenceLengths.empty());
-	poco_assert_dbg (_sequenceLengths.top().first == -1);
+	poco_assert_dbg (_sequenceLengths.top().first <= 0);
 	poco_assert_dbg (_sequenceLengths.top().second == _curLevel);
 	_sequenceLengths.pop();
 	_curLevel--;
