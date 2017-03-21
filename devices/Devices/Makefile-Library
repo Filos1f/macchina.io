@@ -15,8 +15,6 @@ objects = Device DeviceException \
 	SensorRemoteObject \
 	SensorServerHelper \
 	SensorSkeleton \
-	UltraSonicDevice \
-	UltraSonicSensorServerHelper \
 	Device \
 	IDevice \
 	DeviceRemoteObject \

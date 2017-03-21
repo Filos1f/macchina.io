@@ -7,11 +7,7 @@
 #include "Poco/OSP/PreferencesService.h"
 #include "Poco/RemotingNG/ORB.h"
 #include "Poco/Util/Timer.h"
-<<<<<<< HEAD
 #include "IoT/Devices/UltraSonicDeviceServerHelper.h"
-=======
-#include "IoT/Devices/SensorServerHelper.h"
->>>>>>> SA_Brunch
 #include "Poco/Delegate.h"
 #include "Poco/ClassLibrary.h"
 #include "Poco/Format.h"
@@ -59,11 +55,7 @@ public:
 
 	void start(BundleContext::Ptr pContext)
 	{
-<<<<<<< HEAD
-=======
-		std::cout << "\n\nHELLO IM STARTING YAHOOOOOOOOOOOOOO\n\n";
 
->>>>>>> SA_Brunch
 		_pContext = pContext;
 
 		UltraSonicSensor::Params params;

@@ -15,13 +15,11 @@ class IoTDevices_API UltraSonicDevice: public Device
 {
 public:
 	Poco::BasicEvent<const double> valueChanged;
-<<<<<<< HEAD
-=======
-		
+ 		
 	UltraSonicDevice();
 		
 	~UltraSonicDevice();
->>>>>>> SA_Brunch
+
 
 	virtual double distanceValue() const = 0;
 		

@@ -10,8 +10,6 @@ namespace Devices
 {
 
 
-<<<<<<< HEAD
-=======
 UltraSonicDevice::UltraSonicDevice()
 {
 }
@@ -22,7 +20,6 @@ UltraSonicDevice::~UltraSonicDevice()
 }
 
 
->>>>>>> SA_Brunch
 void UltraSonicDevice::clearValueChangedFilter(const std::string& subscriberURI)
 {
 	Poco::RemotingNG::ORB& orb = Poco::RemotingNG::ORB::instance();
