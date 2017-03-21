@@ -13,6 +13,7 @@ clean all:
 	$(MAKE) -C Serial $(MAKECMDGOALS)
 	$(MAKE) -C Tf $(MAKECMDGOALS)
 	$(MAKE) -C Simulation $(MAKECMDGOALS)
+	$(MAKE) -C UltraSonicSensor $(MAKECMDGOALS)
 	$(MAKE) -C Linux $(MAKECMDGOALS)
 	$(MAKE) -C XBeeSensor $(MAKECMDGOALS)
 	$(MAKE) -C SensorTag $(MAKECMDGOALS)

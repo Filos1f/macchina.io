@@ -8,6 +8,7 @@
 				${POCO_BASE}/RemotingNG/include/Poco/RemotingNG/EventDispatcher.h
 				include/IoT/Devices/Device.h
 				include/IoT/Devices/Sensor.h
+				include/IoT/Devices/UltraSonicDevice.h
 				include/IoT/Devices/RotaryEncoder.h
 				include/IoT/Devices/Trigger.h
 				include/IoT/Devices/SerialDevice.h

@@ -85,7 +85,13 @@ objects = Device DeviceException \
 	SwitchEventDispatcher \
 	SwitchRemoteObject \
 	SwitchServerHelper \
-	SwitchSkeleton
+	SwitchSkeleton \
+	UltraSonicDevice \
+	IUltraSonicDevice \
+	UltraSonicDeviceEventDispatcher \
+	UltraSonicDeviceRemoteObject \
+	UltraSonicDeviceServerHelper \
+	UltraSonicDeviceSkeleton \
 
 target         = IoTDevices
 target_version = 1
