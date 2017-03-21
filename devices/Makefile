@@ -12,7 +12,11 @@ clean all:
 	$(MAKE) -C Devices $(MAKECMDGOALS)
 	$(MAKE) -C Serial $(MAKECMDGOALS)
 	$(MAKE) -C Tf $(MAKECMDGOALS)
+<<<<<<< HEAD
 	$(MAKE) -C Simulation $(MAKECMDGOALS)
+=======
+	$(MAKE) -C Tf $(MAKECMDGOALS)
+>>>>>>> SA_Brunch
 	$(MAKE) -C UltraSonicSensor $(MAKECMDGOALS)
 	$(MAKE) -C Linux $(MAKECMDGOALS)
 	$(MAKE) -C XBeeSensor $(MAKECMDGOALS)
