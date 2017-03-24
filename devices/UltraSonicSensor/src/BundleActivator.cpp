@@ -95,3 +95,7 @@ private:
 };
 }
 }
+
+POCO_BEGIN_MANIFEST(Poco::OSP::BundleActivator)
+	POCO_EXPORT_CLASS(IoT::UltraSonicSensor::BundleActivator)
+POCO_END_MANIFEST

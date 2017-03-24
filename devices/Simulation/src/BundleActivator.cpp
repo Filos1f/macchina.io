@@ -19,7 +19,6 @@
 #include "Poco/OSP/PreferencesService.h"
 #include "Poco/RemotingNG/ORB.h"
 #include "Poco/Util/Timer.h"
-#include "IoT/Devices/SensorServerHelper.h"
 #include "IoT/Devices/GNSSSensorServerHelper.h"
 #include "Poco/Delegate.h"
 #include "Poco/ClassLibrary.h"
@@ -53,24 +52,6 @@ public:
 	~BundleActivator()
 	{
 	}
-	
-	void createSensor(const SimulatedSensor::Params& params)
-	{
-		typedef Poco::RemotingNG::ServerHelper<IoT::Devices::Sensor> ServerHelper;
-		
-		Poco::SharedPtr<SimulatedSensor> pSensor = new SimulatedSensor(params, *_pTimer);
-		ServerHelper::RemoteObjectPtr pSensorRemoteObject = ServerHelper::createRemoteObject(pSensor, params.id);
-		
-		Properties props;
-		props.set("io.macchina.device", SimulatedSensor::SYMBOLIC_NAME);
-		if (!params.physicalQuantity.empty())
-		{
-			props.set("io.macchina.physicalQuantity", params.physicalQuantity);
-		}
-		
-		ServiceRef::Ptr pServiceRef = _pContext->registry().registerService(params.id, pSensorRemoteObject, props);
-		_serviceRefs.push_back(pServiceRef);
-	}
 
 	void createGNSSSensor(const SimulatedGNSSSensor::Params& params)
 	{
@@ -91,43 +72,6 @@ public:
 		_pTimer = new Poco::Util::Timer;
 		_pContext = pContext;
 		_pPrefs = ServiceFinder::find<PreferencesService>(pContext);
-		
-		Poco::Util::AbstractConfiguration::Keys keys;
-		_pPrefs->configuration()->keys("simulation.sensors", keys);
-		int index = 0;
-		for (std::vector<std::string>::const_iterator it = keys.begin(); it != keys.end(); ++it)
-		{
-			std::string baseKey = "simulation.sensors.";
-			baseKey += *it;
-
-			SimulatedSensor::Params params;
-			params.id = SimulatedSensor::SYMBOLIC_NAME;
-			params.id += "#";
-			params.id += Poco::NumberFormatter::format(_serviceRefs.size());
-			
-			params.physicalQuantity = _pPrefs->configuration()->getString(baseKey + ".physicalQuantity", "");
-			params.physicalUnit     = _pPrefs->configuration()->getString(baseKey + ".physicalUnit", "");
-			params.initialValue     = _pPrefs->configuration()->getDouble(baseKey + ".initialValue", 0.0);
-			params.delta            = _pPrefs->configuration()->getDouble(baseKey + ".delta", 0.0);
-			params.cycles           = _pPrefs->configuration()->getInt(baseKey + ".cycles", 0);
-			params.updateRate       = _pPrefs->configuration()->getDouble(baseKey + ".updateRate", 0.0);
-			
-			std::string mode = _pPrefs->configuration()->getString(baseKey + ".mode", "linear");
-			if (mode == "linear")
-				params.mode = SimulatedSensor::SIM_LINEAR;
-			else if (mode == "random")
-				params.mode = SimulatedSensor::SIM_RANDOM;
-
-			try
-			{
-				createSensor(params);
-			}
-			catch (Poco::Exception& exc)
-			{
-				pContext->logger().error(Poco::format("Cannot create simulated sensor: %s", exc.displayText())); 
-			}
-			index++;
-		}
 		
 		std::string gpxPath = _pPrefs->configuration()->getString("simulation.gnss.gpxPath", "");
 		if (!gpxPath.empty())

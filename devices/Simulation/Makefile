@@ -12,7 +12,7 @@ include $(POCO_BASE)/build/rules/global
 
 INCLUDE += -I$(PROJECT_BASE)/devices/Devices/include
 
-objects = SimulatedSensor SimulatedGNSSSensor BundleActivator 
+objects = SimulatedGNSSSensor BundleActivator 
 
 target         = io.macchina.simulation
 target_version = 1

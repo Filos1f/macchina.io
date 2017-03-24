@@ -9,12 +9,6 @@
 include $(POCO_BASE)/build/rules/global
 
 objects = Device DeviceException \
-	Sensor \
-	ISensor \
-	SensorEventDispatcher \
-	SensorRemoteObject \
-	SensorServerHelper \
-	SensorSkeleton \
 	Device \
 	IDevice \
 	DeviceRemoteObject \
