@@ -31,7 +31,9 @@
 #include <memory>
 #include <algorithm>
 #include <cctype>
-
+#include "Poco/Thread.h"
+#include "Poco/Runnable.h"
+#include <iostream>
 
 using Poco::File;
 using Poco::Path;
@@ -276,36 +278,72 @@ namespace
 }
 
 
+
+class BundleRunnable: public Poco::Runnable {
+	Bundle& _bundle;
+	Poco::Logger& _logger;
+	Poco::BasicEvent<const BundleLoader::BundleError>& _bundleError;
+	BundleLoader& _bundleLoader;
+public:
+	BundleRunnable(
+		Bundle& bundle,
+		Poco::Logger& logger,
+		Poco::BasicEvent<const BundleLoader::BundleError>& bundleError,
+		BundleLoader& bundleLoader)
+	:_bundle(bundle),
+	_logger(logger),
+	_bundleError(bundleError),
+	_bundleLoader(bundleLoader)
+	{}
+
+	virtual void run(){
+		
+		if (_bundle.state() == Bundle::BUNDLE_RESOLVED && !_bundle.lazyStart())
+		{
+			try
+			{
+				_bundle.start();
+			}
+			catch (Poco::Exception& exc)
+			{   
+				std::string msg("Failed to start bundle ");
+				msg += _bundle.symbolicName();
+				msg += ": ";
+				msg += exc.displayText();
+				_logger.error(msg);
+				
+				BundleLoader::BundleError error;
+				error.pBundle = &_bundle;
+				error.targetState = Bundle::BUNDLE_ACTIVE;
+				error.pException = &exc;
+				_bundleError(&_bundleLoader, error);
+			}
+		}
+	}
+};
+
+
 void BundleLoader::startAllBundles()
 {
 	std::vector<Bundle::Ptr> bundles;
 	listBundles(bundles);
 	std::sort(bundles.begin(), bundles.end(), RunLevelLess());
+	std::vector<Poco::Thread*> threads;
 	
 	for (std::vector<Bundle::Ptr>::iterator it = bundles.begin(); it != bundles.end(); ++it)
 	{
-		if ((*it)->state() == Bundle::BUNDLE_RESOLVED && !(*it)->lazyStart())
-		{
-			try
-			{
-				(*it)->start();
-			}
-			catch (Poco::Exception& exc)
-			{
-				std::string msg("Failed to start bundle ");
-				msg += (*it)->symbolicName();
-				msg += ": ";
-				msg += exc.displayText();
-				_logger.error(msg);
-				
-				BundleError error;
-				error.pBundle = *it;
-				error.targetState = Bundle::BUNDLE_ACTIVE;
-				error.pException = &exc;
-				bundleError(this, error);
-			}
-		}
+		
+		
+		Poco::Thread thread;
+		BundleRunnable br(**it, _logger, bundleError, *this);
+		thread.start(br);
+		thread.join();
+		 
+		
 	}
+	
+	 
+	
 }
 
 
